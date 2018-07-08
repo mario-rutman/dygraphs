@@ -1,8 +1,24 @@
 library(dygraphs)
 library(tidyverse)
 
+# O dygraphs é um 'ggplot' só para séries temporais.
+# O dygraphs é fácil de entender qualquer dúvida ou necessidade olhar no 
+# https://cran.r-project.org/web/packages/dygraphs/dygraphs.pdf
+
 # O objeto que usamos no dygraph para fazer os gráficos é um ts (Time-series).
-# Para fazer um ts 
+# Exemplo de ts.
+ts(1:10, # aqui temos os valores de cada período.
+   frequency = 4, # a frequência por ano, trimestal (12/4=3).
+   start = c(1959, 2)) # quando começa (2º trimestre de 1959)
+
+ts1 <- ts(1:10, frequency = 4, start = c(1959, 2))
+ts1
+ts2 <- ts(1:12, frequency = 4, start = c(1959, 1))
+ts2
+ts3 <- ts(1:36, frequency = 12, start = c(1959, 1))
+ts3
+ts4 <- ts(1:104, frequency = 52, start = c(1959, 1))
+ts4
 
 glimpse(mdeaths) # Conhecendo os data frames.
 glimpse(fdeaths) # São dois time-series de 1 a 72, de jan-1974 a dez-1979 (1980).
@@ -19,6 +35,8 @@ dygraph(lungDeaths) %>%
   dySeries("mdeaths", label = "Homens") %>% # Mudando os labels.
   dySeries("fdeaths", label = "Mulheres") %>% # Mudando os labels.
   dyOptions(stackedGraph = TRUE) %>% # 'Empilhando' as linhas.
+  # o dyOptions é muito extenso olhar no 
+  # https://cran.r-project.org/web/packages/dygraphs/dygraphs.pdf
   dyRangeSelector(height = 20) # Altura do range selector.
 
 hw <- HoltWinters(ldeaths) # hw é uma list de 9 do total de mortes: m + f.
@@ -109,3 +127,13 @@ dygraph(presidents, main = "Presidential Approval") %>%
   dyAxis("y", valueRange = c(0, 100)) %>%
   dyAnnotation("1950-7-1", text = "A", tooltip = "Korea") %>%
   dyAnnotation("1965-1-1", text = "B", tooltip = "Vietnam")
+
+# Colocando linhas verticais. dyEvent. https://cran.r-project.org/web/packages/dygraphs/dygraphs.pdf
+dygraph(presidents, main = "Presidential Approval") %>%
+  dyAxis("y", valueRange = c(0, 100)) %>%
+  dyEvent("1950-6-30", "Korea", labelLoc = "bottom") %>%
+  dyEvent("1965-2-09", "Vietnam", labelLoc = "bottom")
+
+dygraph(presidents, main = "Presidential Approval") %>%
+  dyAxis("y", valueRange = c(0, 100)) %>%
+  dyEvent(c("1950-6-30", "1965-2-09"), c("Korea", "Vietnam"), labelLoc = "bottom")
